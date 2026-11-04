@@ -740,7 +740,7 @@ class Game {
     const wantAds = (this.profile.settings.adsToggle ? I.adsToggled : I.adsHeld) && !d.melee && !w.reloading && !this.sprinting && w.equipT > 0.6;
     this.adsT = clamp(this.adsT + (wantAds ? 1 : -1) * dt / d.adsTime, 0, 1);
     this.updateFov(this.adsT);
-    const scoped = d.scope && this.adsT > 0.9;
+    const scoped = !!d.scope && this.adsT > 0.9;
     this.hud.setScope(scoped);
     this.hud.cross.classList.toggle('ads', !scoped && this.adsT > 0.75);
 

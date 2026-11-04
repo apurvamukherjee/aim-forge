@@ -113,7 +113,7 @@ export class Hud {
     hint.classList.toggle('hidden', def.melee || !(ammo === 0 && !reloading));
   }
 
-  setScope(v) { this.scope.classList.toggle('hidden', !v); this.cross.classList.toggle('hidden', v); }
+  setScope(v) { v = !!v; this.scope.classList.toggle('hidden', !v); this.cross.classList.toggle('hidden', v); }
 
   update(dt, camera, w, h) {
     // floating damage numbers

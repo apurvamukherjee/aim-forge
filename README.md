@@ -1,62 +1,158 @@
-# AIMFORGE — 3D FPS Aim Trainer
+<div align="center">
 
-A first-person 3D aim trainer that runs in the browser with Three.js. You get a full weapon arsenal, animated knives, playable operators, five training modes and career stats. Everything is generated in code: there are no image, model or audio files to download.
+# 🎯 AIMFORGE
+
+**A first-person 3D aim trainer that runs in your browser.**
+Five guns, five animated knives, four operators, five training modes. Every model, texture and sound is generated in code: no asset downloads, no install.
+
+[**⬇ Download (.zip)**](https://github.com/apurvamukherjee/Aim-Trainer-Game/archive/refs/heads/main.zip) &nbsp;·&nbsp;
+[**▶ Watch the trailer (MP4)**](docs/media/aimforge-trailer.mp4) &nbsp;·&nbsp;
+[Run it locally](#run-it) &nbsp;·&nbsp;
+[Controls](#controls)
+
+<a href="docs/media/aimforge-trailer.mp4"><img src="docs/media/aimforge-trailer.gif" alt="AIMFORGE trailer: gameplay highlights" width="720"></a>
+
+<sub>The GIF is a short silent preview. The <a href="docs/media/aimforge-trailer.mp4">full trailer</a> has its original soundtrack and subtitles (burned in, plus a selectable English track and <a href="docs/media/aimforge-trailer.srt">.srt</a>).</sub>
+
+</div>
+
+---
+
+## Screenshots
+
+| Main menu | Loadout |
+| :---: | :---: |
+| ![Main menu with the operator on a 3D stage](docs/media/screenshots/menu.png) | ![Loadout tab with the LR-50 Longbow on the display stand](docs/media/screenshots/loadout.png) |
+| **Operators** | **Knife showcase** |
+| ![Operator tab with Ronin selected; the accent colour retints the UI](docs/media/screenshots/operator.png) | ![Butterfly knife on the display stand mid-flip](docs/media/screenshots/knife-showcase.png) |
+
+| Gridshot | Bot Duel |
+| :---: | :---: |
+| ![Gridshot gameplay with the VK-4 Vanguard](docs/media/screenshots/gridshot.png) | ![Bot Duel: kill feed and damage numbers](docs/media/screenshots/bots.png) |
+| **Sniper scope** | **Smooth Tracking** |
+| ![LR-50 Longbow 4.5x scope in Reflex Flick](docs/media/screenshots/sniper-scope.png) | ![Tracking mode with the K-7 Hornet SMG](docs/media/screenshots/tracking.png) |
+
+| Balisong inspect | Karambit inspect | Bowie inspect |
+| :---: | :---: | :---: |
+| ![Butterfly knife inspect](docs/media/screenshots/knife-butterfly.png) | ![Karambit ring spin](docs/media/screenshots/knife-karambit.png) | ![Bowie blade roll](docs/media/screenshots/knife-bowie.png) |
+
+| Loading | Results | Settings | Career |
+| :---: | :---: | :---: | :---: |
+| ![Loading screen](docs/media/screenshots/loading.png) | ![Results screen](docs/media/screenshots/results.png) | ![Settings](docs/media/screenshots/settings.png) | ![Career stats](docs/media/screenshots/career.png) |
+
+---
 
 ## Run it
 
-The game uses ES modules, so it must be served over HTTP. Opening `index.html` straight from disk won't work. Any static server is fine:
+AIMFORGE is a static site. It uses ES modules, so it must be **served over HTTP**: double-clicking `index.html` won't work.
 
-```bash
-python3 -m http.server 8000
-```
+1. [Download the zip](https://github.com/apurvamukherjee/Aim-Trainer-Game/archive/refs/heads/main.zip) and unzip it, or clone the repo.
+2. Start any static server in the folder:
 
-Then open http://localhost:8000. GitHub Pages works too, because Three.js is vendored in `vendor/`.
+   ```bash
+   python3 -m http.server 8000
+   ```
 
-## Features
+   (`npx serve` works too.)
+3. Open <http://localhost:8000> and click **Deploy**.
 
-- **Loading screen:** a real staged loader (renderer, arena, weapons, operator, bots, shader compile) with tips.
-- **Main menu:** a live 3D stage showing your operator, plus tabs for **Play, Loadout, Operator, Settings and Career**.
-- **Loadout:**
-  - **Primary:** VK-4 Vanguard (AR), K-7 Hornet (SMG), LR-50 Longbow (bolt sniper with a 4.5× scope), SG-12 Breaker (pump shotgun with shell-by-shell reload)
-  - **Secondary:** P-9 Viper pistol
-  - **Melee:** Moth Balisong (butterfly), Talon Karambit, Kestrel Dagger, Ridgeback Bowie, Shinobi Tanto. Each has a signature inspect animation in the hand (`F`) and a draw flourish. `LMB` slashes, `RMB` does a heavy stab.
-  - Each weapon has its own fire rate, damage, headshot multiplier, spread/bloom, recoil, ADS zoom, reload and mobility. The display stand shows the selected weapon, and knives play their inspect animation there on loop.
-- **Operators:** Specter, Ronin, Nova and Moss, with different helmets and gear. Set a callsign plus accent and armor colours. The accent colour also tints the UI and the arena neon.
-- **Modes:** Gridshot, Reflex Flick (tracks reaction time), Smooth Tracking (time on target), Bot Duel (strafing humanoid bots with head hitboxes) and Free Range (untimed, with steel plates at 10/25/50 m and dummies). Each has Easy/Normal/Hard and 30/60/90 s options.
-- **Feel:**
-  - First-person arms and viewmodel with sway, bob, recoil kick, reload/bolt/pump animations, muzzle flash, tracers, bullet holes and sparks
-  - Recoil you control by pulling the mouse down
-  - Dynamic crosshair, hitmarkers, headshot damage numbers and a kill feed
-- **Settings:** CS-scale sensitivity (cm/360 shown), ADS multiplier, FOV, crosshair style/colour/size, volume, ADS toggle, auto-reload, graphics quality.
-- **Career:** personal bests per mode, difficulty and duration, session history and lifetime totals, all stored in `localStorage`.
+**GitHub Pages:** go to *Settings → Pages → Deploy from branch → `main` / root*. Three.js is vendored in `vendor/`, so nothing is fetched from a CDN. The only network request is for Google Fonts, and the game falls back to system fonts without it.
+
+Requirements: a desktop browser with WebGL 2, a mouse and a keyboard. On touch devices the menu shows a warning.
+
+---
+
+## What's in it (current state)
+
+### Screens
+- **Loading screen:** staged loader (renderer → arena → weapons → operator → bots → shader compile) with a progress bar and tips.
+- **Main menu:** live 3D stage with your operator holding the selected primary (drag to rotate). Tabs: **Play · Loadout · Operator · Settings · Career**.
+- **In-game HUD:** score, timer, accuracy, mode stats, ammo, weapon slots, reload bar, kill feed, floating damage numbers (gold for headshots), hitmarkers, a dynamic crosshair that shows spread, and a 3-2-1 countdown.
+- **Pause** (`Esc`): resume, restart, finish, quit, plus quick settings. **Results:** score, accuracy, hits per second, best streak, mode-specific stats and a personal-best badge.
+
+### Weapons
+
+| Slot | Weapon | Type | Notes |
+| --- | --- | --- | --- |
+| 1 | **VK-4 Vanguard** | Assault rifle | 660 RPM, 1.5× red dot, controllable climb |
+| 1 | **K-7 Hornet** | SMG | 900 RPM, suppressed, holo sight, damage falloff |
+| 1 | **LR-50 Longbow** | Bolt-action sniper | 4.5× scope overlay, one-shot headshots, bolt-cycle animation |
+| 1 | **SG-12 Breaker** | Pump shotgun | 9 pellets, shell-by-shell reload you can interrupt, pump animation |
+| 2 | **P-9 Viper** | Pistol | Fast draw, slide-kick animation |
+
+Each gun has its own damage, headshot multiplier, fire rate, magazine, reload time, spread and bloom, recoil, ADS zoom and time, equip time and move speed. You see first-person arms (in your operator's colours) with sway, bob, recoil kick, reload and equip animations, muzzle flash, tracers, bullet holes and sparks. Vertical recoil climbs while you spray, and pulling the mouse down cancels it.
+
+### Knives (slot 3)
+
+| Knife | Inspect animation (`F`) |
+| --- | --- |
+| **Moth Balisong** (butterfly) | Handles fan open and shut while the knife spins; flips open on draw |
+| **Talon Karambit** | Spins around the finger ring |
+| **Kestrel Dagger** | Tossed into the air and caught |
+| **Ridgeback Bowie** | Rolled over to show both faces of the blade |
+| **Shinobi Tanto** | Flipped into reverse grip and back |
+
+`LMB` does an alternating slash, `RMB` a heavy stab. Knife hits register on bots, plates and targets, and you move faster with a knife out. In the Loadout tab, the display stand plays each knife's inspect on loop.
+
+### Operators
+**Specter** (Recon), **Ronin** (Assault), **Nova** (Support) and **Moss** (Marksman), each with a different helmet and gear. Set a callsign plus accent and armor colours. The accent colour also tints the UI, the arena neon and your first-person sleeves.
+
+### Training modes
+| Mode | Goal |
+| --- | --- |
+| **Gridshot** | Three targets on a grid at all times; speed and streak bonuses |
+| **Reflex Flick** | One target anywhere in view that vanishes fast; measures reaction time |
+| **Smooth Tracking** | Keep the crosshair on a strafing orb; scored by time on target |
+| **Bot Duel** | Humanoid bots strafing side to side, with head hitboxes; tracks time-to-kill (Hard spawns two) |
+| **Free Range** | No timer: steel plates at 10/25/50 m, static dummies and a moving bot |
+
+Timed modes offer **Easy / Normal / Hard** (target size, speed and lifetime) and **30 / 60 / 90 s**.
+
+### Settings and progress
+- CS-scale sensitivity (cm/360 at 800 DPI is shown), ADS multiplier, horizontal FOV, crosshair style (cross, cross + dot, dot, circle, T), colour and size, dynamic crosshair, hold or toggle ADS, auto-reload, FPS counter, graphics quality.
+- **Career:** personal bests per mode, difficulty and duration, the last 15 sessions, and lifetime totals (shots, accuracy, kills, headshots, time trained). Everything is saved in `localStorage`.
+
+---
 
 ## Controls
 
-| Key | Action |
+| Input | Action |
 | --- | --- |
 | Mouse | Aim |
-| LMB / RMB | Fire / aim down sights (with a knife: slash / stab) |
-| WASD, Space, Shift, Ctrl | Move, jump, sprint, crouch |
-| R | Reload |
-| 1 / 2 / 3, Q, wheel | Primary / secondary / knife, last weapon, cycle |
-| F | Inspect |
-| Esc | Pause |
+| `LMB` | Fire · knife slash |
+| `RMB` | Aim down sights · knife stab |
+| `W` `A` `S` `D` | Move |
+| `Shift` / `Ctrl` / `Space` | Sprint / crouch / jump |
+| `R` | Reload |
+| `1` `2` `3` | Primary / secondary / knife |
+| `Q`, mouse wheel | Last weapon, cycle weapons |
+| `F` | Inspect |
+| `Esc` | Pause |
 
-## Code layout
+---
+
+## Project layout
 
 ```
 index.html        screens: loading, menu, HUD, pause, results
-styles.css        UI theme
-js/main.js        game loop, player controller, shooting, melee, flow
-js/weapons.js     gun definitions, procedural gun models, first-person viewmodel
-js/knives.js      knife definitions, models and inspect animations
-js/avatar.js      operator / bot character builder
-js/world.js       arena + menu stage
-js/modes.js       training modes, targets and bots
-js/effects.js     tracers, decals, particles
+styles.css        UI theme (accent colour driven by the operator)
+js/main.js        game loop, player controller, shooting, melee, game flow
+js/weapons.js     gun stats, procedural gun models, first-person viewmodel and animations
+js/knives.js      knife stats, models and signature inspect animations
+js/avatar.js      operator and training-bot character builder
+js/world.js       arena (procedural textures, cover, lights) and menu stage
+js/modes.js       training modes, targets, bots, difficulty
+js/effects.js     tracers, bullet holes, sparks, muzzle light
 js/hud.js         in-game HUD
-js/ui.js          menu, loadout, operator, settings, career
-js/audio.js       synthesized WebAudio sounds
-js/storage.js     saved profile
+js/ui.js          menu tabs, loadout, operator, settings, career, pause, results
+js/audio.js       synthesized WebAudio sound effects
+js/storage.js     saved profile (settings, loadout, bests, history)
 vendor/           three.js r160 (MIT)
+docs/media/       trailer (MP4 + subtitles + GIF) and screenshots
 ```
+
+## Credits
+
+- Built with [three.js](https://threejs.org) (MIT, vendored).
+- UI fonts: [Oxanium](https://fonts.google.com/specimen/Oxanium) and [Rajdhani](https://fonts.google.com/specimen/Rajdhani) (SIL OFL) via Google Fonts.
+- The trailer soundtrack is an original piece, synthesized in code for this project. The trailer was rendered frame by frame from the actual game.
