@@ -1,38 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aim Trainer Game</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIMFORGE — 3D Aim Trainer</title>
+  <meta name="description" content="A first-person 3D aim trainer with real weapons, operators and training modes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script type="importmap">{ "imports": { "three": "./vendor/three.module.js" } }</script>
 </head>
 <body>
-    <div class="container">
-        <h1>Aim Trainer Game</h1>
-        <p>Score by clicking the moving box!</p>
+  <canvas id="c"></canvas>
 
-        <p id="timer">Time: <span id="time-left">120</span> seconds</p>
-        <p>High Score: <span id="highscore">0</span></p>
-
-        <div id="game-area">
-            <div id="box"></div>
-        </div>
-
-        <p class="score">Score: <span id="score">0</span></p>
-        
-        <div class="level-buttons">
-            <button id="level-1-btn" class="level-btn">Level 1</button>
-            <button id="level-2-btn" class="level-btn">Level 2</button>
-            <button id="level-3-btn" class="level-btn">Level 3</button>
-        </div>
-
-        <div class="control-buttons">
-            <button id="start-btn">Start Game</button>
-            <button id="pause-btn" disabled>Pause Game</button>
-            <button id="restart-btn" disabled>Restart Game</button>
-        </div>
+  <!-- ============================ LOADING ============================ -->
+  <div id="loading" class="screen">
+    <div class="load-bg"></div>
+    <div class="load-inner">
+      <div class="logo big"><span class="logo-mark"></span><span>AIM<b>FORGE</b></span></div>
+      <div class="load-tag">FIRST-PERSON TACTICAL AIM TRAINING</div>
+      <div class="load-bar"><div id="load-bar-fill"></div></div>
+      <div class="load-row"><span id="load-status">Booting…</span><span id="load-pct">0%</span></div>
+      <div id="load-enter" class="load-enter hidden">CLICK OR PRESS ANY KEY TO ENTER</div>
+      <div class="load-tip"><b>TIP</b> <span id="load-tip"></span></div>
     </div>
+    <noscript><p class="noscript">AIMFORGE needs JavaScript and WebGL.</p></noscript>
+  </div>
 
-    <script src="script.js"></script>
+  <!-- ============================ MAIN MENU ============================ -->
+  <div id="menu" class="screen hidden">
+    <header class="topbar">
+      <div class="logo"><span class="logo-mark"></span><span>AIM<b>FORGE</b></span></div>
+      <nav class="tabs" id="tabs">
+        <button data-tab="play" class="active">Play</button>
+        <button data-tab="loadout">Loadout</button>
+        <button data-tab="operator">Operator</button>
+        <button data-tab="settings">Settings</button>
+        <button data-tab="career">Career</button>
+      </nav>
+      <div class="op-chip">
+        <div class="op-chip-badge" id="chip-badge"></div>
+        <div><div class="op-chip-name" id="chip-name">Recruit</div><div class="op-chip-sub" id="chip-sub">Specter · Recon</div></div>
+      </div>
+    </header>
+
+    <main class="panel-wrap">
+      <!-- PLAY -->
+      <section class="panel" data-panel="play">
+        <h2 class="panel-title">Select Training</h2>
+        <div id="mode-list" class="mode-list"></div>
+        <div class="row-2">
+          <div><div class="label">Difficulty</div><div class="seg" id="seg-diff"></div></div>
+          <div><div class="label">Duration</div><div class="seg" id="seg-dur"></div></div>
+        </div>
+        <div class="deploy-row">
+          <div class="pb"><div class="label">Personal best</div><div id="pb-val" class="pb-val">—</div></div>
+          <button id="btn-deploy" class="btn-primary">Deploy <span>▶</span></button>
+        </div>
+        <div class="loadout-mini" id="loadout-mini"></div>
+      </section>
+
+      <!-- LOADOUT -->
+      <section class="panel hidden" data-panel="loadout">
+        <h2 class="panel-title">Loadout</h2>
+        <div class="label">Primary</div>
+        <div class="weapon-grid" id="primary-grid"></div>
+        <div class="label">Secondary</div>
+        <div class="weapon-grid" id="secondary-grid"></div>
+        <div class="label">Melee</div>
+        <div class="weapon-grid" id="melee-grid"></div>
+        <div class="weapon-detail" id="weapon-detail"></div>
+      </section>
+
+      <!-- OPERATOR -->
+      <section class="panel hidden" data-panel="operator">
+        <h2 class="panel-title">Operator</h2>
+        <div class="op-grid" id="op-grid"></div>
+        <div class="label">Callsign</div>
+        <input id="callsign" class="text-in" maxlength="16" spellcheck="false" autocomplete="off">
+        <div class="label">Accent</div>
+        <div class="swatches" id="sw-accent"></div>
+        <div class="label">Armor</div>
+        <div class="swatches" id="sw-armor"></div>
+        <p class="op-bio" id="op-bio"></p>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="panel hidden" data-panel="settings">
+        <h2 class="panel-title">Settings</h2>
+        <div id="settings-form" class="settings"></div>
+        <div class="label">Crosshair preview</div>
+        <div class="ch-preview"><div id="ch-preview" class="crosshair"><i></i><i></i><i></i><i></i><b></b></div></div>
+      </section>
+
+      <!-- CAREER -->
+      <section class="panel hidden" data-panel="career">
+        <h2 class="panel-title">Career</h2>
+        <div class="career-totals" id="career-totals"></div>
+        <div class="label">Personal bests</div>
+        <div id="career-best" class="table"></div>
+        <div class="label">Recent sessions</div>
+        <div id="career-history" class="table"></div>
+        <button id="btn-reset" class="btn-ghost danger">Reset career stats</button>
+      </section>
+    </main>
+
+    <footer class="menu-foot">
+      <span><kbd>WASD</kbd> move</span><span><kbd>Mouse</kbd> aim</span><span><kbd>LMB</kbd> fire</span><span><kbd>RMB</kbd> ADS</span>
+      <span><kbd>R</kbd> reload</span><span><kbd>1</kbd>/<kbd>2</kbd>/<kbd>3</kbd>/<kbd>Q</kbd> swap</span><span><kbd>F</kbd> inspect</span><span><kbd>Shift</kbd> sprint</span><span><kbd>Ctrl</kbd> crouch</span><span><kbd>Space</kbd> jump</span><span><kbd>Esc</kbd> pause</span>
+    </footer>
+    <div class="drag-hint">◀ drag to rotate ▶</div>
+    <div id="touch-warn" class="touch-warn hidden">AIMFORGE is built for mouse &amp; keyboard. Connect a mouse for the full experience.</div>
+  </div>
+
+  <!-- ============================ HUD ============================ -->
+  <div id="hud" class="hidden">
+    <div id="crosshair" class="crosshair"><i></i><i></i><i></i><i></i><b></b></div>
+    <div id="hitmarker"><i></i><i></i><i></i><i></i></div>
+    <div id="scope" class="hidden"><div class="scope-ring"></div><div class="scope-h"></div><div class="scope-v"></div><div class="scope-dot"></div></div>
+    <div id="dmg-layer"></div>
+    <div id="center-msg"></div>
+    <div id="countdown" class="hidden"></div>
+    <div id="score-pop"></div>
+
+    <div class="hud-top">
+      <div class="hud-box"><div class="hud-l">Score</div><div id="hud-score" class="hud-v">0</div></div>
+      <div class="hud-box timer"><div class="hud-l" id="hud-mode">Gridshot</div><div id="hud-time" class="hud-v">1:00</div></div>
+      <div class="hud-box"><div class="hud-l">Accuracy</div><div id="hud-acc" class="hud-v">0%</div></div>
+    </div>
+    <div id="hud-info" class="hud-info"></div>
+    <div id="free-hint" class="free-hint hidden">FREE RANGE · <kbd>Esc</kbd> to pause / finish</div>
+    <div id="killfeed"></div>
+
+    <div class="hud-bl">
+      <div class="op-name" id="hud-op"></div>
+      <div class="slots">
+        <div class="slot" id="slot-1"><kbd>1</kbd><span id="slot-1-name"></span></div>
+        <div class="slot" id="slot-2"><kbd>2</kbd><span id="slot-2-name"></span></div>
+        <div class="slot" id="slot-3"><kbd>3</kbd><span id="slot-3-name"></span></div>
+      </div>
+    </div>
+    <div class="hud-br">
+      <div class="ammo"><span id="ammo-cur">30</span><span id="ammo-mag">/ 30</span></div>
+      <div id="weapon-name" class="w-name"></div>
+      <div id="weapon-class" class="w-class"></div>
+      <div id="reload-bar" class="reload-bar hidden"><div></div></div>
+      <div id="reload-hint" class="reload-hint hidden">PRESS <kbd>R</kbd> TO RELOAD</div>
+      <div id="melee-hint" class="melee-hint hidden"><kbd>LMB</kbd> slash · <kbd>RMB</kbd> stab · <kbd>F</kbd> inspect</div>
+    </div>
+    <div id="fps" class="fps"></div>
+  </div>
+
+  <div id="lock-hint" class="lock-hint hidden">CLICK TO AIM</div>
+
+  <!-- ============================ PAUSE ============================ -->
+  <div id="pause" class="overlay hidden">
+    <div class="modal">
+      <h2>Paused</h2>
+      <div class="pause-quick" id="pause-quick"></div>
+      <div class="modal-btns">
+        <button id="btn-resume" class="btn-primary">Resume</button>
+        <button id="btn-restart" class="btn-ghost">Restart</button>
+        <button id="btn-finish" class="btn-ghost">Finish session</button>
+        <button id="btn-quit" class="btn-ghost">Quit to menu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ RESULTS ============================ -->
+  <div id="results" class="overlay hidden">
+    <div class="modal results">
+      <div class="res-head">
+        <div><div class="label" id="res-mode">Gridshot · Normal</div><h2>Session complete</h2></div>
+        <div id="res-best" class="res-best hidden">NEW PERSONAL BEST</div>
+      </div>
+      <div class="res-score"><span id="res-score">0</span><small>SCORE</small></div>
+      <div class="res-grid" id="res-grid"></div>
+      <div class="modal-btns">
+        <button id="btn-again" class="btn-primary">Play again <kbd>R</kbd></button>
+        <button id="btn-menu" class="btn-ghost">Main menu</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
