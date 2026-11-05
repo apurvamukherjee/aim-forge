@@ -150,6 +150,9 @@ Timed modes offer **Easy / Normal / Hard** (target size, speed and lifetime) and
 
 ### Settings and progress
 - CS-scale sensitivity (cm/360 at 800 DPI is shown), ADS multiplier, horizontal FOV, crosshair style (cross, cross + dot, dot, circle, T), colour and size, dynamic crosshair, hold or toggle ADS, auto-reload, FPS counter, graphics quality.
+- **Converting sensitivity:** `sens` uses the CS yaw (0.022° per count). Coming from another game, multiply your in-game sensitivity:
+  - Valorant sens × 3.18 = CS sens
+  - Overwatch sens × 0.3 = CS sens
 - **Career:** personal bests per mode, difficulty and duration, the last 15 sessions, and lifetime totals (shots, accuracy, kills, headshots, time trained). Everything is saved in `localStorage`.
 
 ---

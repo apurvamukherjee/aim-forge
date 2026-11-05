@@ -275,7 +275,7 @@ export class Menu {
   // ------------------------------------------------------------ settings
   settingsSchema() {
     return [
-      { k: 'sens', label: 'Sensitivity', type: 'range', exact: true, min: 0.1, max: 6, step: 0.01, fmt: v => v.toFixed(2), hint: v => `${(2.54 * 360 / (v * 0.022 * 800)).toFixed(1)} cm/360 @ 800 DPI` },
+      { k: 'sens', label: 'Sensitivity (CS scale)', type: 'range', exact: true, min: 0.1, max: 6, step: 0.01, fmt: v => v.toFixed(2), hint: v => `${(2.54 * 360 / (v * 0.022 * 800)).toFixed(1)} cm/360 @ 800 DPI` },
       { k: 'adsMult', label: 'ADS sensitivity ×', type: 'range', min: 0.3, max: 2, step: 0.01, fmt: v => v.toFixed(2) },
       { k: 'fov', label: 'Field of view (horizontal)', type: 'range', min: 80, max: 120, step: 1, fmt: v => `${v}°` },
       { k: 'volume', label: 'Master volume', type: 'range', min: 0, max: 1, step: 0.01, fmt: v => `${Math.round(v * 100)}%` },
