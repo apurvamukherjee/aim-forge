@@ -24,6 +24,10 @@ export const DEFAULTS = {
   totals: { shots: 0, hits: 0, runs: 0, seconds: 0, kills: 0, headshots: 0 },
 };
 
+export function mergeProfile(over) {
+  return merge(structuredClone(DEFAULTS), over || {});
+}
+
 function merge(base, over) {
   if (over === null || typeof over !== 'object' || Array.isArray(over)) return over ?? base;
   const out = Array.isArray(base) ? [] : { ...base };
@@ -37,7 +41,7 @@ function merge(base, over) {
 export function loadProfile() {
   let saved = null;
   try { saved = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch { saved = null; }
-  return merge(structuredClone(DEFAULTS), saved || {});
+  return mergeProfile(saved);
 }
 
 export function saveProfile(p) {
