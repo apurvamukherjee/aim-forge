@@ -3,7 +3,7 @@ import { meleeRatings } from './knives.js';
 import { OPERATORS, operatorColors } from './avatar.js';
 import { MODES, DIFFICULTIES } from './modes.js';
 import { THEMES, MAP_IDS } from './maps.js';
-import { DEFAULTS } from './storage.js';
+import { DEFAULTS, mergeProfile, saveProfile } from './storage.js';
 import { fmtTime } from './hud.js';
 
 const $ = (id) => document.getElementById(id);
@@ -298,6 +298,33 @@ export class Menu {
       this.applySettings(); this.buildSettingsAgain();
     });
     $('settings-form').appendChild(reset);
+    const transfer = h('div', 'profile-transfer');
+    const exportBtn = h('button', 'btn-ghost small', 'Export profile');
+    exportBtn.addEventListener('click', () => {
+      const url = URL.createObjectURL(new Blob([JSON.stringify(this.p, null, 2)], { type: 'application/json' }));
+      const link = h('a'); link.href = url; link.download = 'aimforge-profile.json'; link.click();
+      URL.revokeObjectURL(url);
+    });
+    const importBtn = h('button', 'btn-ghost small', 'Import profile');
+    const file = h('input'); Object.assign(file, { type: 'file', accept: 'application/json,.json', hidden: true });
+    const error = h('span', 'profile-import-error'); error.setAttribute('role', 'alert');
+    importBtn.addEventListener('click', () => file.click());
+    file.addEventListener('change', async () => {
+      const selected = file.files[0]; if (!selected) return;
+      try {
+        const parsed = JSON.parse(await selected.text());
+        if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('Invalid profile');
+        const profile = mergeProfile(parsed);
+        this.p = this.g.profile = profile;
+        saveProfile(profile);
+        error.textContent = '';
+        location.reload();
+      } catch {
+        error.textContent = 'Could not import profile. Choose a valid profile JSON file.';
+      } finally { file.value = ''; }
+    });
+    transfer.append(exportBtn, importBtn, file, error);
+    $('settings-form').appendChild(transfer);
     this.applySettings();
   }
 
